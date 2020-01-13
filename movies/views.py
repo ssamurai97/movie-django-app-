@@ -37,18 +37,21 @@ def create(request):
     return redirect('/')
 
 """edit movie function"""
-
 def edit(request, movie_id):
     if request.method == 'POST':
         data = {
             'Name': request.POST.get('name'),
-            'Pictures': [{'url': request.POST.get('url') or 'http://maestroselectronics.com/wp-content/uploads/2017/12/No_Image_Available.jpg'}],
+            'Pictures': [{'url': request.POST.get('url')}],
             'Rating': int(request.POST.get('rating')),
             'Notes': request.POST.get('notes')
         }
 
-        response = AT.update(movie_id, data)
-        messages.success(request, 'Updated movie: {}'.format(response['fields'].get('Name')))
+        try:
+
+            response = AT.update(movie_id, data)
+            messages.success(request, 'Updated movie: {}'.format(response['fields'].get('Name')))
+        except Exception as e:
+            messages.warning(request, "Error while updating {}".format(e))
     return redirect('/')
 
 def delete(request, movie_id):
