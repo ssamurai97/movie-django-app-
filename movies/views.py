@@ -24,7 +24,7 @@ def create(request):
     if request.method == 'POST':
         data = {
             'Name' : request.POST.get('name'),
-            'Pictures': [{'url': request.POST.get('url') or 'http://maestroselectronics.com/wp-content/uploads/2017/12/No_Image_Available.jpg'}],
+            'Pictures': [{'url': request.POST.get('url')}],
             'Rating': int(request.POST.get('rating')),
             'Notes':request.POST.get('notes')
         }
