@@ -24,22 +24,39 @@ def create(request):
     if request.method == 'POST':
         data = {
             'Name' : request.POST.get('name'),
-            'Pictures': [{'url': request.POST.get('url')}],
+            'Pictures': [{'url': request.POST.get('url') or 'http://maestroselectronics.com/wp-content/uploads/2017/12/No_Image_Available.jpg'}],
             'Rating': int(request.POST.get('rating')),
             'Notes':request.POST.get('notes')
         }
+        try:
 
-        AT.insert(data)
+            response = AT.insert(data)
+            messages.success(request,"New movie has been Added: {}".format(response['fields'].get('Name')))
+        except Exception as e:
+            messages.warning(request,"Got an error when try to create a movie: {}".format(e))
     return redirect('/')
 
 """edit movie function"""
+
 def edit(request, movie_id):
     if request.method == 'POST':
         data = {
             'Name': request.POST.get('name'),
-            'Pictures': [{'url': request.POST.get('url')}],
+            'Pictures': [{'url': request.POST.get('url') or 'http://maestroselectronics.com/wp-content/uploads/2017/12/No_Image_Available.jpg'}],
             'Rating': int(request.POST.get('rating')),
             'Notes': request.POST.get('notes')
         }
-        AT.update(movie_id, data)
+
+        response = AT.update(movie_id, data)
+        messages.success(request, 'Updated movie: {}'.format(response['fields'].get('Name')))
+    return redirect('/')
+
+def delete(request, movie_id):
+    try:
+        movie_name = AT.get(movie_id)['fields'].get('Name')
+        cresponse = AT.delete(movie_id)
+        messages.warning(request,"Deleted movie: {}".format(movie_name))
+    except Exception as e:
+        messages.warning(request, 'Error while deleting the a movie: {}'.format(e))
+
     return redirect('/')
